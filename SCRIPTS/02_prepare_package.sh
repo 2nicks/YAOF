@@ -28,12 +28,16 @@ cp -rf ../openwrt_ma/package/network/config/firewall4 ./package/network/config/f
 ### 必要的 Patches ###
 # TCP optimizations
 cp -rf ../PATCH/backport/TCP/* ./target/linux/generic/backport-5.15/
+
 # x86_csum
 cp -rf ../PATCH/backport/x86_csum/* ./target/linux/generic/backport-5.15/
+
 # Patch arm64 型号名称
 cp -rf ../immortalwrt/target/linux/generic/hack-5.15/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch ./target/linux/generic/hack-5.15/312-arm64-cpuinfo-Add-model-name-in-proc-cpuinfo-for-64bit-ta.patch
+
 # BBRv3
 cp -rf ../PATCH/BBRv3/kernel/* ./target/linux/generic/backport-5.15/
+
 # LRNG
 cp -rf ../PATCH/LRNG/* ./target/linux/generic/hack-5.15/
 echo '
@@ -44,6 +48,7 @@ CONFIG_LRNG_JENT=y
 CONFIG_LRNG_CPU=y
 # CONFIG_LRNG_SCHED is not set
 ' >>./target/linux/generic/config-5.15
+
 # SSL
 #rm -rf ./package/libs/mbedtls
 #cp -rf ../immortalwrt/package/libs/mbedtls ./package/libs/mbedtls
@@ -57,6 +62,7 @@ cp -rf ../PATCH/wg/* ./target/linux/generic/hack-5.15/
 ### Fullcone-NAT 部分 ###
 # Patch Kernel 以解决 FullCone 冲突
 cp -rf ../lede/target/linux/generic/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
+
 # bcmfullcone
 cp -a ../PATCH/bcmfullcone/*.patch target/linux/generic/hack-5.15/
 # Patch FireWall 以增添 FullCone 功能
@@ -76,14 +82,18 @@ patch -p1 < ../PATCH/firewall/100-openwrt-firewall4-add-custom-nft-command-suppo
 mkdir -p package/network/config/firewall/patches
 cp -rf ../immortalwrt_21/package/network/config/firewall/patches/100-fullconenat.patch ./package/network/config/firewall/patches/100-fullconenat.patch
 cp -rf ../lede/package/network/config/firewall/patches/101-bcm-fullconenat.patch ./package/network/config/firewall/patches/101-bcm-fullconenat.patch
+
 # iptables
 cp -rf ../lede/package/network/utils/iptables/patches/900-bcm-fullconenat.patch ./package/network/utils/iptables/patches/900-bcm-fullconenat.patch
+
 # network
 wget -qO - https://github.com/openwrt/openwrt/commit/bbf39d07.patch | patch -p1
+
 # Patch LuCI 以增添 FullCone 开关
 pushd feeds/luci
 patch -p1 <../../../PATCH/firewall/01-luci-app-firewall_add_nft-fullcone-bcm-fullcone_option.patch
 popd
+
 # FullCone PKG
 git clone --depth 1 https://github.com/fullcone-nat-nftables/nft-fullcone package/new/nft-fullcone
 cp -rf ../Lienol/package/network/utils/fullconenat ./package/new/fullconenat
@@ -98,11 +108,13 @@ cp -rf ../immortalwrt_23/package/boot/uboot-rockchip ./package/boot/uboot-rockch
 rm -rf ./package/boot/arm-trusted-firmware-rockchip
 cp -rf ../immortalwrt_23/package/boot/arm-trusted-firmware-rockchip ./package/boot/arm-trusted-firmware-rockchip
 sed -i '/REQUIRE_IMAGE_METADATA/d' target/linux/rockchip/armv8/base-files/lib/upgrade/platform.sh
+
 #intel-firmware
 wget -qO - https://github.com/openwrt/openwrt/commit/9c58add.patch | patch -p1
 wget -qO - https://github.com/openwrt/openwrt/commit/64f1a65.patch | patch -p1
 wget -qO - https://github.com/openwrt/openwrt/commit/c21a3570.patch | patch -p1
 sed -i '/I915/d' target/linux/x86/64/config-5.15
+
 # Disable Mitigations
 sed -i 's,rootwait,rootwait mitigations=off,g' target/linux/rockchip/image/mmc.bootscript
 sed -i 's,noinitrd,noinitrd mitigations=off,g' target/linux/x86/image/grub-efi.cfg
