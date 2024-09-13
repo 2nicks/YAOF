@@ -162,16 +162,6 @@ rm -rf ./feeds/packages/utils/coremark
 cp -rf ../sbw_pkg/coremark ./feeds/packages/utils/coremark
 cp -rf ../immortalwrt_23/package/utils/mhz ./package/utils/mhz
 
-# Airconnect
-git clone https://github.com/sbwml/luci-app-airconnect package/new/airconnect
-sed -i 's,respawn,respawn 3600 5 0,g' package/new/airconnect/airconnect/files/airconnect.init
-#cp -rf ../OpenWrt-Add/airconnect ./package/new/airconnect
-#cp -rf ../OpenWrt-Add/luci-app-airconnect ./package/new/luci-app-airconnect
-# luci-app-ap-modem
-cp -rf ../linkease/applications/luci-app-ap-modem ./package/new/luci-app-ap-modem
-# luci-app-irqbalance
-cp -rf ../OpenWrt-Add/luci-app-irqbalance ./package/new/luci-app-irqbalance
-
 # 更换 Nodejs 版本
 rm -rf ./feeds/packages/lang/node
 git clone https://github.com/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node
@@ -196,15 +186,6 @@ cp -rf ../Lienol/tools/upx ./tools/upx
 # 更换 golang 版本
 rm -rf ./feeds/packages/lang/golang
 cp -rf ../openwrt_pkg_ma/lang/golang ./feeds/packages/lang/golang
-
-# 访问控制
-#cp -rf ../lede_luci/applications/luci-app-accesscontrol ./package/new/luci-app-accesscontrol
-#cp -rf ../OpenWrt-Add/luci-app-control-weburl ./package/new/luci-app-control-weburl
-# 广告过滤 AdGuard
-#git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/new/luci-app-adguardhome
-#rm -rf ./feeds/packages/net/adguardhome
-#cp -rf ../openwrt_pkg_ma/net/adguardhome ./feeds/packages/net/adguardhome
-#sed -i '/init/d' feeds/packages/net/adguardhome/Makefile
 
 # Argon 主题
 git clone -b master --depth 1 https://github.com/jerrykuku/luci-theme-argon.git package/new/luci-theme-argon
@@ -243,10 +224,6 @@ pushd feeds/luci
 wget -qO- https://github.com/openwrt/luci/commit/0b5fb915.patch | patch -p1
 popd
 
-# ChinaDNS
-#git clone -b luci --depth 1 https://github.com/QiuSimons/openwrt-chinadns-ng.git package/new/luci-app-chinadns-ng
-#cp -rf ../passwall_pkg/chinadns-ng ./package/new/chinadns-ng
-
 # CPU 控制相关
 cp -rf ../OpenWrt-Add/luci-app-cpufreq ./feeds/luci/applications/luci-app-cpufreq
 ln -sf ../../../feeds/luci/applications/luci-app-cpufreq ./package/feeds/luci/luci-app-cpufreq
@@ -263,11 +240,16 @@ ln -sf ../../../feeds/packages/utils/cpulimit ./package/feeds/packages/cpulimit
 #ln -sf ../../../feeds/packages/net/ddns-scripts_aliyun ./package/feeds/packages/ddns-scripts_aliyun
 
 # Docker 容器
-rm -rf ../../customfeeds/luci/collections/luci-lib-docker
-rm -rf ../../customfeeds/luci/applications/luci-app-docker
-rm -rf ../../customfeeds/luci/applications/luci-app-dockerman
-git clone --depth=1 https://github.com/lisaac/luci-app-dockerman
-git clone --depth=1 https://github.com/lisaac/luci-lib-docker
+rm -rf ./feeds/luci/applications/luci-app-dockerman
+cp -rf ../dockerman/applications/luci-app-dockerman ./feeds/luci/applications/luci-app-dockerman
+sed -i '/auto_start/d' feeds/luci/applications/luci-app-dockerman/root/etc/uci-defaults/luci-app-dockerman
+pushd feeds/packages
+wget -qO- https://github.com/openwrt/packages/commit/e2e5ee69.patch | patch -p1
+wget -qO- https://github.com/openwrt/packages/pull/20054.patch | patch -p1
+popd
+sed -i '/sysctl.d/d' feeds/packages/utils/dockerd/Makefile
+rm -rf ./feeds/luci/collections/luci-lib-docker
+cp -rf ../docker_lib/collections/luci-lib-docker ./feeds/luci/collections/luci-lib-docker
 
 # DiskMan
 cp -rf ../diskman/applications/luci-app-diskman ./package/new/luci-app-diskman
@@ -276,6 +258,7 @@ wget https://raw.githubusercontent.com/lisaac/luci-app-diskman/master/Parted.Mak
 
 # Dnsfilter
 git clone --depth 1 https://github.com/kiddin9/luci-app-dnsfilter.git package/new/luci-app-dnsfilter
+
 # Dnsproxy
 cp -rf ../OpenWrt-Add/luci-app-dnsproxy ./package/new/luci-app-dnsproxy
 
